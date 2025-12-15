@@ -1,22 +1,36 @@
 #pragma once
-#include <glad.h>
-#include <glfw3.h>
+#include <glad/glad.h>  // 注意：根据你的环境，可能是 <glad.h> 或 <glad/glad.h>
+#include <GLFW/glfw3.h> // 同上
 #include <string>
 #include <iostream>
+#include <cmath>
+
+// [修正] 将 CameraState 定义在这里，供所有模块使用
+struct CameraState {
+    float pitch = 0.0f;
+    float yaw = 0.0f;
+    float fov = 60.0f;
+};
 
 class PanoWindow {
 public:
     GLFWwindow* windowHandle = nullptr;
-    CameraState camera; // 公开此变量供外部读取
+    CameraState camera; // 现在这里能正确识别 CameraState 了
 
     // 调试模式下的键盘速度控制
     float debugPlaybackRate = 0.0f;
 
     PanoWindow(int width, int height, const char* title) {
-        glfwInit();
+        // [修复] 确保在创建窗口前初始化 GLFW
+        if (!glfwInit()) {
+            std::cerr << "Failed to init GLFW" << std::endl;
+            exit(-1);
+        }
+
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (!windowHandle) {
             std::cerr << "Failed to create GLFW window" << std::endl;
+            glfwTerminate();
             exit(-1);
         }
         glfwMakeContextCurrent(windowHandle);
@@ -36,8 +50,10 @@ public:
     }
 
     ~PanoWindow() {
-        glfwDestroyWindow(windowHandle);
-        glfwTerminate();
+        if (windowHandle) {
+            glfwDestroyWindow(windowHandle);
+        }
+        // 注意：glfwTerminate() 通常在 main 结束时调用，或者用一个全局管理器管理
     }
 
     bool shouldClose() { return glfwWindowShouldClose(windowHandle); }
