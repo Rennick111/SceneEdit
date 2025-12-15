@@ -201,6 +201,10 @@
     <ClCompile Include="XdsMonitor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HUD.h" />
+    <ClInclude Include="PanoRenderer.h" />
+    <ClInclude Include="PanoWindow.h" />
+    <ClInclude Include="VideoPlayer.h" />
     <ClInclude Include="XdsMonitor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
